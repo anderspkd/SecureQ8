@@ -1,0 +1,18 @@
+#+TITLE: SecureQ8 -- Tools for running secure quantized models
+
+Small set of scripts that can be used to prep a model and input for evaluation
+with [[https://github.com/data61/MP-SPDZ/][MP-SPDZ]].
+
+The scripts require Google flatbuffers and the schema for ~.tflite~
+models. Refer to ~build.sh~ for instructions/guide on how to install
+these. Alternatively, running
+
+: $ ./build.sh all
+
+should do the trick on most systems.
+
+The code works with all MobileNetV1 models, and compatible versions can be
+downloaded [[https://www.tensorflow.org/lite/guide/hosted_models][here]].
+
+The ~images~ folder contains a couple of example images that can be used as
+inputs.
