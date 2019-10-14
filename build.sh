@@ -8,9 +8,11 @@ virtualenv="venv"
 
 setup_venv () {
     # setup virtual environment and install needed python packages
+    pip install virtualenv
+
     if ! [ -d $virtualenv ]; then
 	echo "setting up virtual environment ..."
-	python -m virtualenv -p $(which python3) --no-site-packages $virtualenv
+	python -m virtualenv --no-site-packages $virtualenv
     fi
 
     echo "installing packages"
@@ -20,6 +22,7 @@ setup_venv () {
     pip install tensorflow
     pip install keras
     pip install numpy
+    pip install pillow
 }
 
 setup_flatbuffers () {
@@ -33,7 +36,7 @@ setup_flatbuffers () {
 
     cd $flatbuffers_dir
     cmake -G "Unix Makefiles"
-    make
+    make -j4
 
     cd ..
 

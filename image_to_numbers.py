@@ -32,5 +32,5 @@ data = load_image_data(args.image, input_shape)
 # write input image to a file
 with open(args.outfile, 'w') as f:
     for x in data.flatten():
-        f.write(int(x))
+        f.write(str(int(x)))
         f.write('\n')

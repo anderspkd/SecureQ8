@@ -444,16 +444,8 @@ class TFLiteModel:
         self._current_iter_idx = 0
 
     def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self._current_iter_idx >= len(self.operators):
-            self._reset()
-            raise StopIteration
-        else:
-            idx = self._current_iter_idx
-            self._current_iter_idx += 1
-            return self.operators[idx]
+        for op in self.operators:
+            yield op
 
     def __repr__(self):
         return 'Version %s TFLite model (%s)' % (
