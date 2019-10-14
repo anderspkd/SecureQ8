@@ -33,11 +33,16 @@ computation:
 : $ ./run.sh <model> <image> <protocol> [<trunc> [<n_threads]]
 
 The options are as follows:
-* =model= is one of =v1_{0.25,0.5,0.75,1.0}_{128,160,192,224}=. It will be input by party 0.
-* =image= is the image to be classified. It will be input by party 1.
-* =protocol= is one of semi2k, semi, ring, rep-field, spdz2k, cowgear, ps-rep-ring, ps-rep-field, in the same order as the columns in <https://eprint.iacr.org/2019/131>. See the MP-SPDZ readme for further explanations.
-* =trunc= is one of 0 (probabilistic), 1 (special probabilistic), and 2 (exact). Note that 1 only works with =ring=.
-* =n_threads= is the number of threads per party.
+- =model= is one of =v1_{0.25,0.5,0.75,1.0}_{128,160,192,224}=. It
+  will be input by party 0.
+- =image= is the image to be classified. It will be input by party 1.
+- =protocol= is one of semi2k, semi, ring, rep-field, spdz2k, cowgear,
+  ps-rep-ring, ps-rep-field, in the same order as the columns in
+  <https://eprint.iacr.org/2019/131>. See the MP-SPDZ readme for
+  further explanations.
+- =trunc= is one of 0 (probabilistic), 1 (special probabilistic), and
+  2 (exact). Note that 1 only works with =ring=.
+- =n_threads= is the number of threads per party.
 
 For example,
 
