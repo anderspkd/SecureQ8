@@ -8,21 +8,21 @@ virtualenv="venv"
 
 setup_venv () {
     # setup virtual environment and install needed python packages
-    pip install virtualenv
+    pip3 install virtualenv
 
     if ! [ -d $virtualenv ]; then
 	echo "setting up virtual environment ..."
-	python -m virtualenv --no-site-packages $virtualenv
+	python3 -m virtualenv $virtualenv
     fi
 
     echo "installing packages"
 
     . $virtualenv/bin/activate
-    pip install $flatbuffers_dir/python/
-    pip install tensorflow
-    pip install keras
-    pip install numpy
-    pip install pillow
+    pip3 install $flatbuffers_dir/python/
+    pip3 install tensorflow
+    pip3 install keras
+    pip3 install numpy
+    pip3 install pillow
 }
 
 setup_flatbuffers () {

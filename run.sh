@@ -5,6 +5,7 @@ image=$2
 protocol=$3
 trunc=${4:-0}
 n_threads=${5:-1}
+shift 5
 
 out_dir=MP-SPDZ/Player-Data
 mkdir $out_dir
@@ -34,11 +35,15 @@ if [[ $protocol = cowgear ]]; then
     run_opt='-l 40'
 fi
 
-python2 ./compile.py -D $opt benchmark_mobilenet $model $trunc $n_threads
+python ./compile.py -D $opt benchmark_mobilenet $model $trunc $n_threads $*
 
 Scripts/setup-ssl.sh
 
-Scripts/$protocol.sh benchmark_mobilenet-$model-$trunc-$n_threads $run_opt
+IFS=-
+opts=$*
+IFS=' '
+test $opts && opts=-$opts
+Scripts/$protocol.sh benchmark_mobilenet-$model-$trunc-$n_threads$opts $run_opt
 
 # allow debugging with docker
 exit 0

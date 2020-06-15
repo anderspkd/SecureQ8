@@ -30,7 +30,7 @@ Or you can download the source and build it there:
 After setting everything up, you can use the main script to run the
 computation:
 
-: $ ./run.sh <model> <image> <protocol> [<trunc> [<n_threads]]
+: $ ./run.sh <model> <image> <protocol> [<trunc> [<n_threads]] conv2ds cisc [split]
 
 The options are as follows:
 - =model= is one of =v1_{0.25,0.5,0.75,1.0}_{128,160,192,224}=. It
@@ -43,15 +43,18 @@ The options are as follows:
 - =trunc= is one of 0 (probabilistic), 1 (special probabilistic), and
   2 (exact). Note that 1 only works with =ring=.
 - =n_threads= is the number of threads per party.
+- =conv2ds= and =cisc= speed up compilation and execution.
+- =split= activates comparison as in
+  <https://eprint.iacr.org/2018/403.pdf>. This only works with =ring=.
 
 For example,
 
-: $ ./run.sh v1_0.25_128 images/collie.jpg ring 1 4
+: $ ./run.sh v1_0.25_128 images/collie.jpg ring 1 4 conv2ds cisc split
 
-computes inference on =images/collie.jpg= with the cheapest model
+computes inference on =images/collie.jpg= with the cheapest model and
 semi-honest honest-majority computation modulo 2^72, special
-truncation, and four threads. It should output =guess: 170=, which
-corresponds to the ImageNet category "Irish wolfhound".
+truncation, and four threads. It should output =guess: 232=, which
+corresponds to the ImageNet category "Border collie".
 
 This computation is also run when building a Docker container using
 the provided =Dockerfile=. Simply run the following from this
