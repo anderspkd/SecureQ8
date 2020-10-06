@@ -3,6 +3,16 @@
 Small set of scripts that can be used to prep a model and input for evaluation
 with [[https://github.com/data61/MP-SPDZ/][MP-SPDZ]].
 
+** Installation (with Docker)
+
+Run the following  from this directory to build a Docker container:
+
+: $ docker build .
+
+At the of the installation, the example below is run automatically.
+
+** Installation (without Docker)
+
 The scripts require Google flatbuffers and the schema for ~.tflite~
 models. Refer to ~build.sh~ for instructions/guide on how to install
 these. Alternatively, running
@@ -22,42 +32,64 @@ either use a script to download the tested version:
 
 : $ ./get-mp-spdz.sh
 
-Or you can download the source and build it there:
+Note the precompiled binaries are less optimized for compatibility. To
+reproduce the benchmarks, you can download the source and build it:
 
 : $ git submodule update --init MP-SPDZ
-: $ cd MP-SPDZ; make -j8 tldr; make -j8
+: $ ./build-mp-spdz.sh
 
-After setting everything up, you can use the main script to run the
+This requires a range of dependencies, see the =Dockerfile= for more
+information.
+
+** Running locally
+
+After setting everything up, you can use this script to run the
 computation:
 
-: $ ./run.sh <model> <image> <protocol> [<trunc> [<n_threads]] conv2ds cisc [split]
+: $ ./run-local.sh <model> <image> <protocol> <trunc> <n_threads>
 
 The options are as follows:
 - =model= is one of =v1_{0.25,0.5,0.75,1.0}_{128,160,192,224}=. It
   will be input by party 0.
 - =image= is the image to be classified. It will be input by party 1.
-- =protocol= is one of semi2k, semi, ring, rep-field, spdz2k, cowgear,
-  ps-rep-ring, ps-rep-field, in the same order as the columns in
-  <https://eprint.iacr.org/2019/131>. See the MP-SPDZ readme for
-  further explanations.
-- =trunc= is one of 0 (probabilistic), 1 (special probabilistic), and
-  2 (exact). Note that 1 only works with =ring=.
+- =protocol= is the number of the column (0-7) in Tables 1/3 in
+  <https://eprint.iacr.org/2019/131> or one of semi2k, hemi,
+  ring, rep-field, spdz2k, cowgear, ps-rep-ring, ps-rep-field.
+  See the MP-SPDZ readme for descriptions of the protocols.
+- =trunc= is either =prob= (probabilistic) or =exact= corresponding
+  to the respective lines in Tables 1/3.
 - =n_threads= is the number of threads per party.
-- =conv2ds= and =cisc= speed up compilation and execution.
-- =split= activates comparison as in
-  <https://eprint.iacr.org/2018/403.pdf>. This only works with =ring=.
 
 For example,
 
-: $ ./run.sh v1_0.25_128 images/collie.jpg ring 1 4 conv2ds cisc split
+: $ ./run-local.sh v1_0.25_128 images/collie.jpg ring prob 4
 
 computes inference on =images/collie.jpg= with the cheapest model and
 semi-honest honest-majority computation modulo 2^72, special
 truncation, and four threads. It should output =guess: 232=, which
 corresponds to the ImageNet category "Border collie".
 
-This computation is also run when building a Docker container using
-the provided =Dockerfile=. Simply run the following from this
-directory provided that Docker is installed:
+** Running remotely
 
-: $ docker build .
+You need to set up hosts that run SSH and have all higher TCP ports
+open between each other. We have used =c5.9xlarge= instances in the
+same AWS zone and hence 36 threads. The hosts have to run Linux with a
+glib not older than Ubuntu 18.04 (2.27), which is the case for Amazon
+Linux 2. Honest-majority protocols require three hosts while
+dishonest-majority protocols require two.
+
+With Docker, you can run the following script to set up host names,
+user name and SSH RSA key. We do *NOT* recommend running it outside
+Docker because it might overwrite an existing RSA key file.
+
+: $ ./setup-remote.sh
+
+Without Docker, familiarise yourself with SSH configuration options
+and SSH keys. You can use =ssh_config= and the above script to find
+out the requirements. =HOSTS= has to contain the hostnames separated
+by whitespace.
+
+After setting up, you can the following using the same options as
+above:
+
+: $ ./run-remote.sh <model> <image> <protocol> <trunc> <n_threads>
